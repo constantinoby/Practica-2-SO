@@ -1,9 +1,8 @@
+#define _POSIX_C_SOURCE 200112L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-
-#define _POSIX_C_SOURCE 200112L
 
 #define DEBUG 1
 #define COMMAND_LINE_SIZE 1024
@@ -42,10 +41,10 @@ int internal_bg(char **args);
 
 void imprimir_prompt();
 
+char line[COMMAND_LINE_SIZE];
 
 int main()
 {
-    char line[COMMAND_LINE_SIZE];
 
         while (1)
     {
@@ -59,6 +58,17 @@ int main()
     
 }
 
+void imprimir_prompt()
+{
+    char *user = getenv("USER");
+
+    char *home= getenv("HOME");
+
+    printf(ROJO_T "%s:"  GRIS_T "%s"  AMARILLO_T " %c: " RESET ,user, home, PROMPT);
+    
+
+    fflush(stdout);
+}
 
 char *read_line(char *line)
 {
@@ -68,24 +78,13 @@ char *read_line(char *line)
     if(fgets(line, COMMAND_LINE_SIZE, stdin) == NULL)
     {
         perror("Error al leer la linea");
+        
     }
 
     return line;
 }
 
-void imprimir_prompt()
-{
-    char *user = getenv("USER");
 
-    char *prompt = malloc(sizeof(char) * COMMAND_LINE_SIZE);
-
-    getcwd(prompt, COMMAND_LINE_SIZE);
-
-    printf(ROJO_T "%s:" RESET GRIS_T "%s" RESET AMARILLO_T " %c: " RESET user, prompt, PROMPT);
-    free(prompt);
-
-    fflush(stdout);
-}
 
 int execute_line(char *line)
 {
@@ -131,9 +130,10 @@ int parse_args(char **args, char *line)
         else
         {
             //Añadimos el NULL
-            args[tokens]=NULL;
+            token=NULL;
+            args[tokens]=token;
 #if DEBUG
-            printf("[parse_args() → token %d arreglado: %s]\n", tokens, token);
+            printf("[parse_args() → token %d corregido: %s]\n", tokens, token);
 #endif
         }
 
