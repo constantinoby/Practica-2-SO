@@ -4,7 +4,7 @@ PRACTICA 2
 SQUAD: Ctrl Unit
 
 AUTORES: 
-         Nicolás Tuñón Sanz
+         Nicolás Sanz Tuñón
          Constantino Byelov Serdiuk
 ___________________________________________________________________________________________________
 */
