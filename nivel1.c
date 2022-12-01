@@ -1,3 +1,13 @@
+/*_________________________________________________________________________________________________
+PRACTICA 2
+
+SQUAD: Ctrl Unit
+
+AUTORES: 
+         Nicolás Tuñón Sanz
+         Constantino Byelov Serdiuk
+___________________________________________________________________________________________________
+
 #define _POSIX_C_SOURCE 200112L
 
 #include <stdio.h>
@@ -43,6 +53,11 @@ void imprimir_prompt();
 
 char line[COMMAND_LINE_SIZE];
 
+/*
+---------------------------------------------------------------------------------------------------
+PROGAMA PRINCIPAL
+---------------------------------------------------------------------------------------------------
+*/
 int main()
 {
 
@@ -58,6 +73,17 @@ int main()
     
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: imprimir_prompt()
+
+ACCION: muestra el prompt por pantalla
+
+PARAMETROS: no tiene
+
+SALIDA: no devuelve nada
+---------------------------------------------------------------------------------------------------
+*/
 void imprimir_prompt()
 {
     char *user = getenv("USER");
@@ -70,6 +96,18 @@ void imprimir_prompt()
     fflush(stdout);
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: read_line() 
+
+ACCION: Se encarga de leer la linea que se introduce por teclado
+
+PARAMETROS: 
+    - *line: Recibe el array donde se almacenara la linea leida
+
+SALIDA: devuelve el puntero a la linea leida
+---------------------------------------------------------------------------------------------------
+*/
 char *read_line(char *line)
 {
 
@@ -85,7 +123,18 @@ char *read_line(char *line)
 }
 
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: execute_line()
 
+ACCION: Lleva a cabo la ejecucion de la linea de comandos introducida por el usuario. 
+
+PARAMETROS: 
+    - *line: Recibe la linea leida por teclado
+
+SALIDA: devuelve 1 si se corresponde con un comando interno o 0 si es externo
+---------------------------------------------------------------------------------------------------
+*/
 int execute_line(char *line)
 {
     char *args[ARGS_SIZE];
@@ -105,7 +154,19 @@ int execute_line(char *line)
     
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: parse_args() 
 
+ACCION: se encarga de trocear la linea en tokens. Va visualizando de forma momentanea los tokens
+
+PARAMETROS: 
+    - **args: Recibe el comando que se recoje por teclado
+    - *line: Recibe la linea leida por teclado
+
+SALIDA: devuelve el numero de tokens que tiene la linea
+---------------------------------------------------------------------------------------------------
+*/
 int parse_args(char **args, char *line) {
     int i = 0;
 
@@ -139,6 +200,18 @@ int parse_args(char **args, char *line) {
     return i;
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: check_internal()
+
+ACCCION: Verifica si el comando que recibe por parametro es interno o externo 
+
+PARAMETROS:
+    - **args: Recibe el comando que se recoje por teclado para identificar si es interno o externo
+
+SALIDA: Devuelve 1 si es un comando interno o 0 si es externo.
+---------------------------------------------------------------------------------------------------
+*/
 int check_internal(char **args)
 {
     int comando_interno = 0;
@@ -181,7 +254,18 @@ int check_internal(char **args)
     return comando_interno;
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: internal_cd() (NO IMPLEMENTADA)
 
+ACCION: Verifica si se trata del comando interno "cd"
+
+PARAMETROS: 
+    - **args: Recibe el comando que se recoje por teclado
+
+SALIDA: devuelve 1 si se corresponde con el comando interno "cd"
+---------------------------------------------------------------------------------------------------
+*/
 int internal_cd(char **args)
 {
 #if DEBUG
@@ -190,6 +274,18 @@ int internal_cd(char **args)
     return 1;
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: internal_export() (NO IMPLEMENTADA)
+
+ACCION: Verifica si se trata del comando interno "export"
+
+PARAMETROS: 
+    - **args: Recibe el comando que se recoje por teclado
+
+SALIDA: devuelve 1 si se corresponde con el comando interno "export"
+---------------------------------------------------------------------------------------------------
+*/
 int internal_export(char **args)
 {
 #if DEBUG
@@ -198,6 +294,18 @@ int internal_export(char **args)
     return 1;
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: internal_source() (NO IMPLEMENTADA)
+
+ACCION: Verifica si se trata del comando interno "source"
+
+PARAMETROS: 
+    - **args: Recibe el comando que se recoje por teclado
+
+SALIDA: devuelve 1 si se corresponde con el comando interno "source"
+---------------------------------------------------------------------------------------------------
+*/
 int internal_source(char **args)
 {
 #if DEBUG
@@ -206,6 +314,18 @@ int internal_source(char **args)
     return 1;
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: internal_jobs() (NO IMPLEMENTADA)
+
+ACCION: Verifica si se trata del comando interno "jobs". 
+
+PARAMETROS: 
+    - **args: Recibe el comando que se recoje por teclado
+
+SALIDA: devuelve 1 si se corresponde con el comando interno "jobs"
+---------------------------------------------------------------------------------------------------
+*/
 int internal_jobs(char **args)
 {
 #if DEBUG
@@ -214,6 +334,18 @@ int internal_jobs(char **args)
     return 1;
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: internal_fg() (NO IMPLEMENTADA)
+
+ACCION: Verifica si se trata del comando interno "cd".
+
+PARAMETROS: 
+    - **args: Recibe el comando que se recoje por teclado
+
+SALIDA: devuelve 1 si se corresponde con el comando interno "fg"
+---------------------------------------------------------------------------------------------------
+*/
 int internal_fg(char **args)
 {
 #if DEBUG
@@ -222,6 +354,18 @@ int internal_fg(char **args)
     return 1;
 }
 
+/*
+---------------------------------------------------------------------------------------------------
+FUNCION: internal_bg() (NO IMPLEMENTADA)
+
+ACCION: Verifica si se trata del comando interno "bg".
+
+PARAMETROS: 
+    - **args: Recibe el comando que se recoje por teclado
+
+SALIDA: devuelve 1 si se corresponde con el comando interno "bg"
+---------------------------------------------------------------------------------------------------
+*/
 int internal_bg(char **args)
 {
 #if DEBUG
