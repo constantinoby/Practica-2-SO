@@ -7,6 +7,7 @@ AUTORES:
          Nicolás Tuñón Sanz
          Constantino Byelov Serdiuk
 ___________________________________________________________________________________________________
+*/
 
 #define _POSIX_C_SOURCE 200112L
 
