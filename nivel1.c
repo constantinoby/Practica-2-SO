@@ -106,44 +106,37 @@ int execute_line(char *line)
 }
 
 
-int parse_args(char **args, char *line)
-{
-    int tokens=0;
+int parse_args(char **args, char *line) {
+    int i = 0;
+
     const char s[5] = " \t\r\n";
-    char *token;
 
-    token = strtok(line, s);
-    args[tokens]=token;
+    args[i] = strtok(line, s);
 
-    while(token != NULL)
-    {
+    #if DEBUG 
+        fprintf(stderr, GRIS_T "[parse_args()→ token %i: %s]\n" RESET, i, args[i]);
+    #endif
 
-#if DEBUG
-        printf("[parse_args() → token %d: %s]\n", tokens, token);
-#endif
+    while (args[i] && args[i][0] != '#') // args[i]!= NULL && *args[i]!='#'
+    { 
+        i++;
+        args[i] = strtok(NULL, s);
 
-        //Quitamos los comentarios
-        if(*(token) != '#')
-        {
-            args[tokens]= token;
-        }
-        else
-        {
-            //Añadimos el NULL
-            token=NULL;
-            args[tokens]=token;
-#if DEBUG
-            printf("[parse_args() → token %d corregido: %s]\n", tokens, token);
-#endif
-        }
-
-        //Leemos el siguiente token
-        token = strtok(NULL, s);
-        tokens++;
+        #if DEBUG 
+            fprintf(stderr, GRIS_T "[parse_args()→ token %i: %s]\n" RESET, i, args[i]);
+        #endif
 
     }
-    return tokens;
+    if (args[i]) 
+    {
+        args[i] = NULL; // por si el último token es el símbolo comentario
 
+        #if DEBUG 
+            fprintf(stderr, GRIS_T "[parse_args()→ token %i corregido: %s]\n" RESET, i, args[i]);
+        #endif
+        
+    }
+    return i;
 }
 
 int check_internal(char **args)
@@ -236,4 +229,3 @@ int internal_bg(char **args)
 #endif
     return 1;
 }
-
