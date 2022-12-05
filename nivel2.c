@@ -290,24 +290,26 @@ SALIDA: devuelve 1 si se corresponde con el comando interno "export"
 */
 int internal_export(char **args)
 {
-  if (args[1])
+  if (args[1])                                                              //Si tenemos un parametro lo separamos
   {
     args[1] = strtok(args[1], "=");                                         // Variable de entorno
     args[2] = strtok(NULL, "=");                                            // Valor de la variable de entorno
   }
 
-    if (args[1]==NULL || args[2]==NULL)
+    if (args[1]==NULL || args[2]==NULL)                                     //Si alguna de las variables es NULL tiramos error de sintaxis
     {
         fprintf(stderr, ROJO_T " Error de sintaxis. Uso: export Nombre=Valor\n" RESET);
     }
-    else
+    else                                                                   //Si no es NULL exportamos la variable
     {
         #if DEBUG2 
         fprintf(stderr, GRIS_T "[internal_export()→ nombre : %s]\n" RESET, args[1]);  
         fprintf(stderr, GRIS_T "[internal_export()→ valor : %s]\n" RESET, args[2]); 
         fprintf(stderr, GRIS_T "[internal_export()→ antiguo valor para USER : %s]\n" RESET, getenv(args[1]));      
         #endif
-        setenv(args[1],args[2], 1);
+
+        setenv(args[1],args[2], 1);                             // sobreescribe el entorno actual con los parametros que se le pasan
+
         #if DEBUG2 
         fprintf(stderr, GRIS_T "[internal_export()→ nuevo valor para USER : %s]\n" RESET, args[2]);        
         #endif
@@ -316,7 +318,6 @@ int internal_export(char **args)
     return 1;
 
 }
-
 /*
 ---------------------------------------------------------------------------------------------------
 FUNCION: internal_source() (NO IMPLEMENTADA)
