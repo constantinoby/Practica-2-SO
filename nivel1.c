@@ -89,7 +89,7 @@ void imprimir_prompt()
 {
     char *user = getenv("USER");
 
-    char *home= getenv("HOME");
+    char *home= getenv("PWD");
 
     printf(ROJO_T "%s:"  GRIS_T "%s"  AMARILLO_T " %c: " RESET ,user, home, PROMPT);
     
