@@ -14,9 +14,12 @@ ________________________________________________________________________________
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h> 
 
 #define DEBUG1 0    // Debug del parse_args
 #define DEBUG2 1    // Debug del internal_export
+#define DEBUG3 1    // Debug del internal_cd
+
 #define COMMAND_LINE_SIZE 1024
 #define PROMPT '$'
 #define ARGS_SIZE 64
@@ -52,6 +55,7 @@ int internal_fg(char **args);
 int internal_bg(char **args);
 
 void imprimir_prompt();
+int eraseC(char *line);
 
 char line[COMMAND_LINE_SIZE];
 
@@ -90,7 +94,7 @@ void imprimir_prompt()
 {
     char *user = getenv("USER");
 
-    char *home= getenv("HOME");
+    char *home= getenv("PWD");
 
     printf(ROJO_T "%s:"  GRIS_T "%s"  AMARILLO_T " %c: " RESET ,user, home, PROMPT);
     
@@ -258,9 +262,10 @@ int check_internal(char **args)
 
 /*
 ---------------------------------------------------------------------------------------------------
-FUNCION: internal_cd() (NO IMPLEMENTADA)
+FUNCION: internal_cd()
 
-ACCION: Verifica si se trata del comando interno "cd"
+ACCION: Verifica si se trata del comando interno "cd", en tal caso cambia de repositorio dependiendo 
+        de los parametros que le lleguen.
 
 PARAMETROS: 
     - **args: Recibe el comando que se recoje por teclado
@@ -270,15 +275,74 @@ SALIDA: devuelve 1 si se corresponde con el comando interno "cd"
 */
 int internal_cd(char **args)
 {
-#if DEBUG
-    printf("[internal_cd() → Esta función cambiará de directorio]\n");
+    char *path;
+    path = malloc(COMMAND_LINE_SIZE);                                 //Asignamos un espacio de memoria al path que nos van a pasar por comando
+    if(!path){
+        fprintf(stderr, ROJO_T "No hay espacio de memoria dinámica" RESET);
+        return -1;
+    }
+    
+    if(args[1] != NULL){                                                    // Tenemos un segundo argumento?
+
+        for(int i = 1; args[i]!=NULL; i++){                                 // Creamos una linea con todos los argumentos
+            strcat(path, args[i]);
+            if(args[i+1]!=NULL){
+                strcat(path, " ");
+            }
+
+        }
+
+        eraseC(path);                                                       // Eliminamos los valores especiales
+       
+        if(chdir(path) < 0){                                                //Si el cambio de directorio va mal
+            perror("chdir() Error: ");
+             
+            strcpy(path, "\0");                                             // Limpiamos memoria
+            free(path);
+            
+            return -1;
+        }
+        strcpy(path, "\0");                                                 // Limpiamos memoria
+        free(path);
+    
+    }else if(chdir(getenv("HOME")) < 0 ){                                   // Si no nos pasan parametros cambiamos de directorio a HOME
+        perror("chdir() Error2: ");
+        return -1;
+    } 
+
+                                                                            // Cambiamos el PWD tras recibir el pathing correcto
+    char cwd[COMMAND_LINE_SIZE];
+    
+    if(getcwd(cwd, sizeof(cwd)) == NULL){                                   //Asignamos el nuevo path al PWD
+        perror("getcwd() Error3: ");
+        return -1;
+    }else{
+        setenv("PWD", cwd, 1);
+    }
+
+#if DEBUG3
+    char *prompt;
+    if ((prompt = malloc(COMMAND_LINE_SIZE)))
+    {
+        // Gets the current work directory.
+        getcwd(prompt, COMMAND_LINE_SIZE);
+
+        fprintf(stderr, GRIS_T "[internal_cd() → PWD: %s]\n" RESET, prompt);
+    }
+    else
+    {
+        perror("Error debug internal_cd()");
+    }
+
+    free(prompt);
 #endif
+
     return 1;
 }
 
 /*
 ---------------------------------------------------------------------------------------------------
-FUNCION: internal_export() (NO IMPLEMENTADA)
+FUNCION: internal_export()
 
 ACCION: Verifica si se trata del comando interno "export"
 
@@ -396,4 +460,39 @@ int internal_bg(char **args)
     printf("[internal_bg() → Esta función parsará/activará a segundo plano procesos]\n");
 #endif
     return 1;
+}
+
+
+/*
+---------------------------------------------------------------------------------------------------
+METODOS DE USUARIO
+---------------------------------------------------------------------------------------------------
+*/
+
+int eraseC(char *line){
+
+    char s[4] = "\\\"\'";
+    char res[COMMAND_LINE_SIZE];
+    int res_i = 0;
+    int found;
+    int cambio = 0;
+    
+    for(int i = 0; line[i] != '\0'; i++){                                   // Recorremos la linea de comandos que nos ha llegado.
+    found = 0;
+        for(int j = 0; j < 3 &&(found == 0); j++){                          // Recorremos todos os separadores.
+            if (line[i]==s[j]){
+                found = 1;                                                  // Encontramos el caracter separador.
+                cambio = 1;                                                 // Indicamos que se ha habido cambio en la linea.
+            }
+        } 
+        if(found == 0){                                                     // Si no hemos encontrado un valor de los posibles separadores, copiamos la linea.
+            res[res_i] = line[i]; 
+            res_i++;
+        }
+
+    }
+    res[res_i] = '\0';                                              //Se termina la linea de resultado.
+    
+    strcpy(line, res);                                              // Pasamos la linea modificada.
+    return cambio;
 }
