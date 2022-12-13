@@ -470,7 +470,7 @@ void reaper(int signum)
     //colocamos job_list[0] a sus valores iniciales
     jobs_list[0].pid=0;
     jobs_list[0].status='F';
-    memset(jobs_list[0].cmd,0,COMMAND_LINE_SIZE);
+    memset(jobs_list[0].cmd,'\0',COMMAND_LINE_SIZE);
 }
 
 /*
