@@ -14,7 +14,8 @@ ________________________________________________________________________________
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h> 
+#include <unistd.h>
+#include <sys/wait.h>
 
 #define DEBUG1 0                // Debug del parse_args
 #define DEBUG2 0                // Debug del internal_export
